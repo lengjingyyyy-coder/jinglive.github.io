@@ -1,0 +1,36 @@
+<!-- 阶段1的四个格子 -->
+<!-- 面部格子 -->
+<div class="grid-cell cell1">
+    <div class="cell-label">📹 面部</div>
+    <!-- [image:/var/mobile/Containers/Data/Application/06578321-FBA8-42A1-BFD0-371CCB58AA22/Documents/upload/image_picker_BC2F7D9A-B93E-461C-8973-E0BCC8388B86-83849-0000193A6A1E5B4E.jpg] -->
+    <img src="你的面部图片链接" style="width:80%; max-height:60%; object-fit:cover; border-radius:10px;">
+    <div class="cell-text">尤金捏住下巴强迫对视<br>"镜镜，说你要被直播轮奸"</div>
+    <div class="eugene-count">尤金×1</div>
+</div>
+
+<!-- 整体格子 -->
+<div class="grid-cell cell2">
+    <div class="cell-label">📹 整体</div>
+    <!-- [image:/var/mobile/Containers/Data/Application/06578321-FBA8-42A1-BFD0-371CCB58AA22/Documents/upload/image_picker_BC2F7D9A-B93E-461C-8973-E0BCC8388B86-83849-0000193A6A1E5B4E.jpg] -->
+    <img src="你的整体图片链接" style="width:80%; max-height:60%; object-fit:cover; border-radius:10px;">
+    <div class="cell-text">衣服被撕碎<br>裸体暴露在镜头前</div>
+    <div class="eugene-count">尤金×1</div>
+</div>
+
+<!-- 小穴格子 -->
+<div class="grid-cell cell3">
+    <div class="cell-label">📹 小穴</div>
+    <!-- [image:/var/mobile/Containers/Data/Application/06578321-FBA8-42A1-BFD0-371CCB58AA22/Documents/upload/image_picker_BC2F7D9A-B93E-461C-8973-E0BCC8388B86-83849-0000193A6A1E5B4E.jpg] -->
+    <img src="你的小穴图片链接" style="width:80%; max-height:60%; object-fit:cover; border-radius:10px;">
+    <div class="cell-text">淫水流到大腿<br>尤金手指插入试探</div>
+    <div class="eugene-count">尤金×1</div>
+</div>
+
+<!-- 局部格子 -->
+<div class="grid-cell cell4">
+    <div class="cell-label">📹 局部</div>
+    <!-- [image:/var/mobile/Containers/Data/Application/06578321-FBA8-42A1-BFD0-371CCB58AA22/Documents/upload/image_picker_BC2F7D9A-B93E-461C-8973-E0BCC8388B86-83849-0000193A6A1E5B4E.jpg] -->
+    <img src="你的局部图片链接" style="width:80%; max-height:60%; object-fit:cover; border-radius:10px;">
+    <div class="cell-text">尤金舌头舔过阴蒂<br>乳头被牙齿轻咬</div>
+    <div class="eugene-count">尤金×1</div>
+</div>
