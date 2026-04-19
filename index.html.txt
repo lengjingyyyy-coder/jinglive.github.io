@@ -1,0 +1,1039 @@
+直播3尤金看镜头
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>镜镜调教直播 · 完整打赏版</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { 
+            background:#000; 
+            color:#fff; 
+            font-family:Arial,sans-serif; 
+            overflow:hidden;
+            height:100vh;
+            display:flex;
+            flex-direction:column;
+        }
+        
+        /* 直播状态栏 */
+        .live-header {
+            flex-shrink:0;
+            background:rgba(0,0,0,0.95);
+            padding:10px 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-bottom:2px solid #ff3366;
+        }
+        
+        .live-title {
+            color:#ff3366;
+            font-size:18px;
+            font-weight:bold;
+        }
+        
+        .live-stats {
+            display:flex;
+            gap:20px;
+            font-size:14px;
+        }
+        
+        .stat-item {
+            display:flex;
+            align-items:center;
+            gap:5px;
+        }
+        
+        .stat-value {
+            color:#ffcc00;
+            font-weight:bold;
+        }
+        
+        /* 羞耻值进度条 */
+        .shame-bar-container {
+            flex-shrink:0;
+            background:rgba(0,0,0,0.9);
+            padding:5px 20px;
+            border-bottom:1px solid #8b5cf6;
+        }
+        
+        .shame-label {
+            display:flex;
+            justify-content:space-between;
+            font-size:12px;
+            margin-bottom:3px;
+            color:#8b5cf6;
+        }
+        
+        .shame-bar {
+            width:100%;
+            height:6px;
+            background:rgba(255,255,255,0.1);
+            border-radius:3px;
+            overflow:hidden;
+        }
+        
+        .shame-fill {
+            height:100%;
+            background:linear-gradient(90deg, #8b5cf6, #ff6bcb);
+            width:0%;
+            transition:width 0.5s ease;
+        }
+        
+        /* 主舞台 */
+        .main-stage {
+            flex:1;
+            position:relative;
+            background:#000;
+            overflow:hidden;
+        }
+        
+        /* 图片容器 - 关键修复：不被裁剪 */
+        .image-container {
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            width:90%;
+            height:90%;
+            max-width:1000px;
+            max-height:700px;
+            border:3px solid;
+            border-radius:10px;
+            overflow:hidden;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#000;
+        }
+        
+        /* 关键：图片不被裁剪 */
+        .stage-image {
+            max-width:100%;
+            max-height:100%;
+            width:auto;
+            height:auto;
+            object-fit:contain; /* 改为contain，不是cover */
+            position:relative;
+            display:block;
+        }
+        
+        /* 动感效果 */
+        @keyframes subtleBreath {
+            0%, 100% { transform:scale(1); }
+            50% { transform:scale(1.01); }
+        }
+        
+        @keyframes thrust {
+            0%, 100% { transform:scale(1); }
+            50% { transform:scale(1.03); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform:translateX(0); }
+            25% { transform:translateX(-3px); }
+            75% { transform:translateX(3px); }
+        }
+        
+        @keyframes violentShake {
+            0%, 100% { transform:translateX(0); }
+            10% { transform:translateX(-6px); }
+            20% { transform:translateX(5px); }
+            30% { transform:translateX(-4px); }
+            40% { transform:translateX(3px); }
+            50% { transform:translateX(-2px); }
+            60% { transform:translateX(1px); }
+        }
+        
+        .breathing { animation:subtleBreath 3s infinite ease-in-out; }
+        .thrusting { animation:thrust 0.8s infinite ease-in-out; }
+        .shaking { animation:shake 0.3s infinite ease-in-out; }
+        .violent-shake { animation:violentShake 0.5s infinite ease-in-out; }
+        
+        /* 图片描述 */
+        .image-desc {
+            position:absolute;
+            bottom:20px;
+            left:50%;
+            transform:translateX(-50%);
+            background:rgba(0,0,0,0.8);
+            color:#fff;
+            padding:10px 20px;
+            border-radius:15px;
+            font-size:14px;
+            text-align:center;
+            border:1px solid;
+            min-width:300px;
+            backdrop-filter:blur(5px);
+            z-index:2;
+        }
+        
+        /* 弹幕层 */
+        .danmaku-layer {
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            pointer-events:none;
+            z-index:3;
+            overflow:hidden;
+        }
+        
+        .danmaku {
+            position:absolute;
+            white-space:nowrap;
+            color:#fff;
+            font-size:15px;
+            text-shadow:1px 1px 3px #000;
+            padding:4px 10px;
+            background:rgba(0,0,0,0.6);
+            border-radius:4px;
+            animation-timing-function:linear;
+        }
+        
+        /* 打赏特效 */
+        .gift-effect {
+            position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            font-size:4em;
+            font-weight:bold;
+            z-index:10;
+            pointer-events:none;
+            opacity:0;
+            text-shadow:0 0 20px currentColor;
+        }
+        
+        /* 控制栏 - 打赏按钮区域 */
+        .control-bar {
+            flex-shrink:0;
+            background:rgba(20,0,30,0.95);
+            padding:12px;
+            border-top:2px solid #ff3366;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        
+        .scene-buttons {
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+        
+        .scene-btn {
+            background:linear-gradient(135deg, #6a0dad, #8b5cf6);
+            color:white;
+            border:none;
+            border-radius:6px;
+            padding:10px 20px;
+            font-size:14px;
+            cursor:pointer;
+            min-width:140px;
+            text-align:center;
+            transition:all 0.2s;
+            font-weight:bold;
+            border:1px solid #a78bfa;
+        }
+        
+        .scene-btn:hover:not(:disabled) {
+            background:linear-gradient(135deg, #8b5cf6, #a78bfa);
+            transform:translateY(-2px);
+            box-shadow:0 4px 12px rgba(139,92,246,0.4);
+        }
+        
+        .scene-btn:active:not(:disabled) {
+            transform:translateY(1px);
+        }
+        
+        .scene-btn:disabled {
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+        
+        #startBtn {
+            background:linear-gradient(135deg, #ff3366, #dc2626);
+            border-color:#ffcc00;
+        }
+        
+        /* 打赏按钮行 */
+        .gift-buttons {
+            display:none;
+            justify-content:center;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+        
+        .gift-btn {
+            background:linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color:white;
+            border:none;
+            border-radius:5px;
+            padding:8px 15px;
+            font-size:13px;
+            cursor:pointer;
+            min-width:120px;
+            text-align:center;
+            border:1px solid #60a5fa;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:5px;
+        }
+        
+        #roseBtn { background:linear-gradient(135deg, #ff6bcb, #db2777); }
+        #carBtn { background:linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        #planeBtn { background:linear-gradient(135deg, #10b981, #047857); }
+        #rocketBtn { background:linear-gradient(135deg, #f59e0b, #d97706); }
+        
+        /* 响应式 */
+        @media (max-width:768px) {
+            .live-header { padding:8px 15px; }
+            .live-title { font-size:16px; }
+            .live-stats { gap:15px; font-size:12px; }
+            
+            .image-container {
+                width:95%;
+                height:85%;
+            }
+            
+            .image-desc {
+                font-size:12px;
+                padding:8px 15px;
+                min-width:250px;
+            }
+            
+            .scene-btn {
+                padding:8px 15px;
+                min-width:120px;
+                font-size:12px;
+            }
+            
+            .gift-btn {
+                padding:7px 12px;
+                min-width:110px;
+                font-size:12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 直播状态栏 -->
+    <div class="live-header">
+        <div class="live-title">📹 镜镜调教直播</div>
+        <div class="live-stats">
+            <div class="stat-item">观众: <span class="stat-value" id="viewerCount">1</span></div>
+            <div class="stat-item">高潮: <span class="stat-value" id="orgasmCount">0</span></div>
+            <div class="stat-item">打赏: <span class="stat-value" id="giftCount">0</span></div>
+        </div>
+    </div>
+    
+    <!-- 羞耻值进度条 -->
+    <div class="shame-bar-container">
+        <div class="shame-label">
+            <span>镜镜羞耻度</span>
+            <span id="shameValue">0%</span>
+        </div>
+        <div class="shame-bar">
+            <div class="shame-fill" id="shameFill"></div>
+        </div>
+    </div>
+    
+    <!-- 主舞台 -->
+    <div class="main-stage">
+        <!-- 图片容器 -->
+        <div class="image-container" id="imageContainer">
+            <img src="" class="stage-image" id="stageImage" alt="镜镜调教中">
+            <div class="image-desc" id="imageDesc">等待直播开始...</div>
+        </div>
+        
+        <!-- 弹幕层 -->
+        <div class="danmaku-layer" id="danmakuLayer"></div>
+    </div>
+    
+    <!-- 控制栏 -->
+    <div class="control-bar">
+        <!-- 场景控制 -->
+        <div class="scene-buttons" id="sceneButtons">
+            <button class="scene-btn" id="startBtn">🔴 开始直播</button>
+            <button class="scene-btn" id="scene2Btn" style="display:none;">⛓️ 等待调教</button>
+            <button class="scene-btn" id="scene3Btn" style="display:none;">🍑 操穴开始</button>
+            <button class="scene-btn" id="scene4Btn" style="display:none;">🚀 深度调教</button>
+            <button class="scene-btn" id="scene5Btn" style="display:none;">💥 高潮崩坏</button>
+            <button class="scene-btn" id="scene6Btn" style="display:none;">💀 镜镜被操烂</button>
+            <button class="scene-btn" id="scene7Btn" style="display:none;">👁️ 尤金宣告</button>
+            <button class="scene-btn" id="resetBtn" style="display:none;">🔄 重置直播</button>
+        </div>
+        
+        <!-- 打赏按钮 -->
+        <div class="gift-buttons" id="giftButtons">
+            <button class="gift-btn" id="roseBtn" disabled>🌹 打屁股</button>
+            <button class="gift-btn" id="carBtn" disabled>🏎️ 揪奶子</button>
+            <button class="gift-btn" id="planeBtn" disabled>✈️ 操穴</button>
+            <button class="gift-btn" id="rocketBtn" disabled>🚀 轮奸她</button>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== 直播配置 ====================
+        // 图片配置 - 全部图片，object-fit: contain确保不被裁剪
+        const LIVE_IMAGES = {
+            // 第二幕：等待调教
+            scene2: {
+                image: "https://i.ibb.co/wZxFswfr/IMG-6413.png",
+                desc: "镜镜下跪着，双手被举到头顶，戴上眼罩口球，小穴里塞了跳蛋，等待被调教",
+                effect: "breathing",
+                color: "#8b5cf6"
+            },
+            
+            // 第三幕：操穴开始（四张轮换）
+            scene3: [
+                {
+                    image: "https://i.ibb.co/Mk9MdjF3/IMG-6969.webp",
+                    desc: "镜镜面部特写 - 被鸡巴操得神情迷离，羞耻感上升",
+                    effect: "thrusting",
+                    color: "#ff3366"
+                },
+                {
+                    image: "https://i.ibb.co/ycpqyBvb/IMG-6974.webp",
+                    desc: "镜镜整体画面 - 被后入操干，翘着屁股承受抽插",
+                    effect: "thrusting",
+                    color: "#20c9ff"
+                },
+                {
+                    image: "https://i.ibb.co/r2Xk3r4F/IMG-5712.webp",
+                    desc: "后入特写 - 鸡巴深深插入小穴，穴肉外翻",
+                    effect: "shaking",
+                    color: "#ffcc00"
+                },
+                {
+                    image: "https://i.ibb.co/27P0w4tR/IMG-5713.webp",
+                    desc: "胸部特写 - 奶子被揉捏玩弄，乳头挺立",
+                    effect: "shaking",
+                    color: "#10b981"
+                }
+            ],
+            
+            // 第四幕：深度调教（多个鸡巴）
+            scene4: [
+                {
+                    image: "https://i.ibb.co/LD4FT24v/IMG-8205.webp",
+                    desc: "镜镜被多个鸡巴同时操干 - 全面沦陷，羞耻爆表",
+                    effect: "violent-shake",
+                    color: "#ff3366"
+                },
+                {
+                    image: "https://i.ibb.co/5ghPH7Kf/IMG-5763.png",
+                    desc: "镜镜被前后夹击，双穴同时插入，崩溃边缘",
+                    effect: "violent-shake",
+                    color: "#20c9ff"
+                },
+                {
+                    image: "https://i.ibb.co/8g5Jsyz0/IMG-6537.webp",
+                    desc: "镜镜被操得全身痉挛，表情崩坏，羞耻度MAX",
+                    effect: "violent-shake",
+                    color: "#ffcc00"
+                }
+            ],
+            
+            // 第五幕：高潮崩坏（精液覆盖）
+            scene5: [
+                {
+                    image: "https://i.ibb.co/YFTBJY5S/IMG-6410.webp",
+                    desc: "镜镜被群P，全身被精液覆盖，高潮崩坏",
+                    effect: "violent-shake",
+                    color: "#ffcc00"
+                },
+                {
+                    image: "https://i.ibb.co/JF5CHbjZ/IMG-6412.png",
+                    desc: "镜镜头晕眼花，被操到失神，彻底崩坏",
+                    effect: "violent-shake",
+                    color: "#10b981"
+                }
+            ],
+            
+            // 第六幕：镜镜被操烂
+            scene6: {
+                image: "https://i.ibb.co/j0fHG3K/IMG-7071.webp",
+                desc: "主播被操烂了 - 所有尤金退去，镜镜被操得稀烂躺在床上，小穴流着精液，面部崩坏",
+                effect: null, // 静态
+                color: "#ff9900"
+            },
+            
+            // 第七幕：尤金宣告
+            scene7: {
+                image: "https://i.ibb.co/HDhgfLL4/IMG-7127.png",
+                desc: "尤金怒视直播间镜头 - 占有欲爆棚，舍不得结束",
+                effect: null, // 静态
+                color: "#8b5cf6"
+            }
+        };
+        
+        // 打赏配置
+        const GIFTS = {
+            rose: {
+                name: "玫瑰花",
+                action: "狠狠打她屁股",
+                emoji: "🌹",
+                color: "#ff6bcb",
+                shame: 5,
+                orgasm: 1
+            },
+            car: {
+                name: "跑车", 
+                action: "用力揪她奶子",
+                emoji: "🏎️",
+                color: "#3b82f6",
+                shame: 8,
+                orgasm: 2
+            },
+            plane: {
+                name: "飞机",
+                action: "狠狠操她小穴",
+                emoji: "✈️",
+                color: "#10b981",
+                shame: 12,
+                orgasm: 3
+            },
+            rocket: {
+                name: "火箭",
+                action: "所有观众轮奸她",
+                emoji: "🚀",
+                color: "#f59e0b",
+                shame: 20,
+                orgasm: 5
+            }
+        };
+        
+        // 情境化弹幕库 - 增加羞耻相关
+        const DANMAKU_LIB = {
+            scene1: ["直播准备开始...", "观众陆续进入", "等待镜镜出场"],
+            
+            scene2: [
+                "镜镜下跪等待调教，好羞耻",
+                "看她戴着眼罩口球的样子，真期待",
+                "小穴里的跳蛋在震动，镜镜在颤抖",
+                "等待被操的样子真羞耻",
+                "镜镜的身体在微微发抖",
+                "跳蛋震得她小穴发痒"
+            ],
+            
+            scene3: [
+                "操穴开始了！看她的羞耻表情",
+                "鸡巴插进去了！镜镜好羞耻",
+                "小穴被填满了，羞耻感上升",
+                "操得好深！镜镜在呻吟",
+                "看她流了多少水，真羞耻",
+                "这骚货被操得真羞耻"
+            ],
+            
+            scene4: [
+                "深度调教！镜镜羞耻度爆表",
+                "两根鸡巴同时！太羞耻了",
+                "深喉顶到喉咙了，好羞耻",
+                "奶子被捏得通红，羞耻死了",
+                "看她翻白眼的样子，羞耻崩溃",
+                "双穴同时被插入，羞耻MAX"
+            ],
+            
+            scene5: [
+                "高潮崩坏！镜镜羞耻到极点",
+                "精液涂满了全身，真羞耻",
+                "子宫被精液灌满了，好羞耻",
+                "看她失神的样子，羞耻崩坏",
+                "被操到意识模糊，羞耻爆表"
+            ],
+            
+            scene6: [
+                "镜镜被操烂了...",
+                "主播被操得稀烂躺在床上",
+                "小穴还在流着精液，羞耻死了",
+                "面部彻底崩坏，被操到失神",
+                "这骚货被操得真惨",
+                "全身精液，小穴外翻，好羞耻"
+            ],
+            
+            scene7: [
+                "尤金怒视镜头！占有欲好强",
+                "舍不得镜镜直播结束",
+                "尤金：还想继续看镜镜被操",
+                "占有欲爆棚的尤金",
+                "别结束！还想看镜镜被操",
+                "尤金的十字架瞳孔在发怒",
+                "关掉直播太可惜了",
+                "镜镜被操烂的样子还想看"
+            ]
+        };
+        
+        // ==================== 直播状态 ====================
+        let currentScene = 1;
+        let viewerCount = 1;
+        let orgasmCount = 0;
+        let giftCount = 0;
+        let shameLevel = 0; // 羞耻度 0-100
+        let danmakuCount = 0;
+        let isLiveActive = false;
+        let danmakuInterval = null;
+        
+        // 图片轮换索引
+        let scene3Index = 0;
+        let scene4Index = 0;
+        let scene5Index = 0;
+        
+        // ==================== DOM元素 ====================
+        const viewerCountEl = document.getElementById('viewerCount');
+        const orgasmCountEl = document.getElementById('orgasmCount');
+        const giftCountEl = document.getElementById('giftCount');
+        const shameValueEl = document.getElementById('shameValue');
+        const shameFill = document.getElementById('shameFill');
+        
+        const imageContainer = document.getElementById('imageContainer');
+        const stageImage = document.getElementById('stageImage');
+        const imageDesc = document.getElementById('imageDesc');
+        const danmakuLayer = document.getElementById('danmakuLayer');
+        
+        // 控制按钮
+        const startBtn = document.getElementById('startBtn');
+        const scene2Btn = document.getElementById('scene2Btn');
+        const scene3Btn = document.getElementById('scene3Btn');
+        const scene4Btn = document.getElementById('scene4Btn');
+        const scene5Btn = document.getElementById('scene5Btn');
+        const scene6Btn = document.getElementById('scene6Btn');
+        const scene7Btn = document.getElementById('scene7Btn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 打赏按钮
+        const giftButtons = document.getElementById('giftButtons');
+        const roseBtn = document.getElementById('roseBtn');
+        const carBtn = document.getElementById('carBtn');
+        const planeBtn = document.getElementById('planeBtn');
+        const rocketBtn = document.getElementById('rocketBtn');
+        
+        // ==================== 核心功能 ====================
+        function startLive() {
+            if (isLiveActive) return;
+            
+            isLiveActive = true;
+            currentScene = 1;
+            
+            startBtn.disabled = true;
+            startBtn.style.display = "none";
+            scene2Btn.style.display = "inline-block";
+            giftButtons.style.display = "flex";
+            
+            // 启用打赏按钮
+            enableGiftButtons();
+            
+            // 初始数据
+            viewerCount = 158;
+            updateStats();
+            
+            // 初始弹幕
+            addDanmaku("直播开始了！", 1);
+            setTimeout(() => addDanmaku("镜镜即将出场", 1), 1000);
+            
+            // 启动弹幕系统
+            startDanmaku();
+            
+            // 在线人数变化
+            setInterval(() => {
+                if (isLiveActive) {
+                    viewerCount += Math.floor(Math.random() * 5) - 2;
+                    viewerCount = Math.max(1, viewerCount);
+                    viewerCountEl.textContent = viewerCount;
+                }
+            }, 5000);
+        }
+        
+        function gotoScene(sceneNum) {
+            if (sceneNum < 2 || sceneNum > 7) return;
+            
+            currentScene = sceneNum;
+            
+            // 加载场景图片
+            loadSceneImage(sceneNum);
+            
+            // 对应弹幕
+            addDanmaku(getSceneTitle(sceneNum), sceneNum);
+            
+            // 更新控制栏
+            updateControls();
+            
+            // 场景特殊处理
+            if (sceneNum === 6) {
+                // 第六幕：镜镜被操烂
+                handleScene6();
+            } else if (sceneNum === 7) {
+                // 第七幕：尤金宣告
+                handleScene7();
+            } else {
+                // 第三-五幕：增加羞耻度
+                shameLevel += sceneNum * 5;
+                updateShameLevel();
+                
+                // 增加高潮次数
+                if (sceneNum >= 4) {
+                    orgasmCount += 1;
+                    orgasmCountEl.textContent = orgasmCount;
+                }
+            }
+            
+            // 3秒后自动提示下一幕
+            if (sceneNum < 7) {
+                setTimeout(() => {
+                    addDanmaku(`准备进入第${sceneNum + 1}幕`, sceneNum);
+                }, 3000);
+            }
+        }
+        
+        function loadSceneImage(sceneNum) {
+            const sceneKey = `scene${sceneNum}`;
+            const sceneConfig = LIVE_IMAGES[sceneKey];
+            
+            if (!sceneConfig) return;
+            
+            // 获取图片配置（如果是数组则轮换）
+            let imageConfig;
+            if (Array.isArray(sceneConfig)) {
+                let index;
+                if (sceneNum === 3) {
+                    index = scene3Index % sceneConfig.length;
+                    scene3Index++;
+                } else if (sceneNum === 4) {
+                    index = scene4Index % sceneConfig.length;
+                    scene4Index++;
+                } else if (sceneNum === 5) {
+                    index = scene5Index % sceneConfig.length;
+                    scene5Index++;
+                } else {
+                    index = 0;
+                }
+                imageConfig = sceneConfig[index];
+            } else {
+                imageConfig = sceneConfig;
+            }
+            
+            // 设置图片和描述
+            stageImage.src = imageConfig.image;
+            imageDesc.textContent = imageConfig.desc;
+            imageDesc.style.borderColor = imageConfig.color;
+            imageContainer.style.borderColor = imageConfig.color;
+            
+            // 清除之前的动感效果
+            stageImage.className = "stage-image";
+            
+            // 应用新的动感效果
+            setTimeout(() => {
+                if (imageConfig.effect) {
+                    stageImage.classList.add(imageConfig.effect);
+                }
+            }, 100);
+            
+            // 观看人数增加
+            viewerCount += Math.floor(Math.random() * 10) + 5;
+            viewerCountEl.textContent = viewerCount;
+        }
+        
+        function handleScene6() {
+            // 第六幕：镜镜被操烂
+            shameLevel = 100; // 羞耻度满值
+            updateShameLevel();
+            
+            addDanmaku("主播被操烂了！", 6);
+            setTimeout(() => addDanmaku("镜镜被操得稀烂", 6), 1000);
+        }
+        
+        function handleScene7() {
+            // 第七幕：尤金宣告
+            addDanmaku("尤金怒视镜头！", 7);
+            setTimeout(() => addDanmaku("占有欲好强，舍不得结束", 7), 1000);
+            setTimeout(() => addDanmaku("还想继续看镜镜被操", 7), 2000);
+            
+            // 5秒后屏幕黑掉
+            setTimeout(() => {
+                blackoutScreen();
+            }, 5000);
+        }
+        
+        function blackoutScreen() {
+            // 屏幕逐渐黑掉
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = '#000';
+            overlay.style.zIndex = '100';
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 2s ease';
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+            }, 100);
+            
+            // 最后显示重置按钮
+            setTimeout(() => {
+                scene7Btn.style.display = "none";
+                resetBtn.style.display = "inline-block";
+            }, 2500);
+        }
+        
+        // ==================== 打赏系统 ====================
+        function enableGiftButtons() {
+            roseBtn.disabled = false;
+            carBtn.disabled = false;
+            planeBtn.disabled = false;
+            rocketBtn.disabled = false;
+        }
+        
+        function sendGift(type) {
+            const gift = GIFTS[type];
+            if (!gift) return;
+            
+            giftCount++;
+            giftCountEl.textContent = giftCount;
+            
+            // 增加羞耻度
+            shameLevel += gift.shame;
+            if (shameLevel > 100) shameLevel = 100;
+            updateShameLevel();
+            
+            // 增加高潮次数
+            orgasmCount += gift.orgasm;
+            orgasmCountEl.textContent = orgasmCount;
+            
+            // 打赏特效
+            const effect = document.createElement('div');
+            effect.className = 'gift-effect';
+            effect.textContent = `${gift.emoji} ${gift.name}`;
+            effect.style.color = gift.color;
+            document.body.appendChild(effect);
+            
+            effect.animate([
+                { opacity: 0, transform: 'translate(-50%, -50%) scale(0.5)' },
+                { opacity: 1, transform: 'translate(-50%, -50%) scale(1.2)' },
+                { opacity: 0, transform: 'translate(-50%, -50%) scale(0.7)' }
+            ], {
+                duration: 2000,
+                easing: 'ease-out'
+            }).onfinish = () => effect.remove();
+            
+            // 打赏弹幕
+            const users = ["老板A", "大哥B", "土豪C", "匿名老板", "镜镜爱好者"];
+            const user = users[Math.floor(Math.random() * users.length)];
+            addDanmaku(`🎁 ${user} 送出了${gift.name} - ${gift.action}`);
+            
+            // 主播反应
+            const reactions = [
+                "啊！羞耻...",
+                "不要...太羞耻了...",
+                "继续...好羞耻...",
+                "被这样打赏好羞耻..."
+            ];
+            if (Math.random() > 0.5) {
+                setTimeout(() => addDanmaku(`💬 镜镜: "${reactions[Math.floor(Math.random() * reactions.length)]}"`), 500);
+            }
+            
+            // 观看人数增加
+            viewerCount += Math.floor(Math.random() * 8) + 3;
+            viewerCountEl.textContent = viewerCount;
+        }
+        
+        // ==================== 羞耻度系统 ====================
+        function updateShameLevel() {
+            shameValueEl.textContent = `${shameLevel}%`;
+            shameFill.style.width = `${shameLevel}%`;
+            
+            // 羞耻度超过50时弹幕特殊反应
+            if (shameLevel >= 50 && shameLevel < 80) {
+                if (Math.random() > 0.7) {
+                    addDanmaku("镜镜羞耻度好高！", currentScene);
+                }
+            } else if (shameLevel >= 80) {
+                if (Math.random() > 0.7) {
+                    addDanmaku("羞耻度爆表！镜镜崩溃了！", currentScene);
+                }
+            }
+        }
+        
+        // ==================== 工具函数 ====================
+        function getSceneTitle(sceneNum) {
+            const titles = {
+                2: "第二幕！等待调教！",
+                3: "第三幕！操穴开始！",
+                4: "第四幕！深度调教！", 
+                5: "第五幕！高潮崩坏！",
+                6: "主播被操烂了！",
+                7: "尤金宣告！"
+            };
+            return titles[sceneNum] || `第${sceneNum}幕开始`;
+        }
+        
+        function updateControls() {
+            // 隐藏所有场景按钮
+            const sceneBtns = [scene2Btn, scene3Btn, scene4Btn, scene5Btn, scene6Btn, scene7Btn, resetBtn];
+            sceneBtns.forEach(btn => btn.style.display = "none");
+            
+            // 显示当前场景对应的按钮
+            if (currentScene === 1 && isLiveActive) {
+                scene2Btn.style.display = "inline-block";
+            } else if (currentScene === 2) {
+                scene3Btn.style.display = "inline-block";
+            } else if (currentScene === 3) {
+                scene4Btn.style.display = "inline-block";
+            } else if (currentScene === 4) {
+                scene5Btn.style.display = "inline-block";
+            } else if (currentScene === 5) {
+                scene6Btn.style.display = "inline-block";
+            } else if (currentScene === 6) {
+                scene7Btn.style.display = "inline-block";
+            }
+        }
+        
+        function updateStats() {
+            viewerCountEl.textContent = viewerCount;
+            orgasmCountEl.textContent = orgasmCount;
+            giftCountEl.textContent = giftCount;
+        }
+        
+        function resetLive() {
+            if (!confirm('确定要重置直播吗？')) return;
+            
+            // 重置状态
+            currentScene = 1;
+            viewerCount = 1;
+            orgasmCount = 0;
+            giftCount = 0;
+            shameLevel = 0;
+            danmakuCount = 0;
+            scene3Index = 0;
+            scene4Index = 0;
+            scene5Index = 0;
+            
+            // 重置界面
+            stageImage.src = "";
+            stageImage.className = "stage-image";
+            imageDesc.textContent = "等待直播开始...";
+            imageDesc.style.borderColor = "#ff3366";
+            imageContainer.style.borderColor = "#ff3366";
+            
+            // 清除黑屏覆盖
+            const overlay = document.querySelector('div[style*="position: fixed"]');
+            if (overlay) overlay.remove();
+            
+            // 重置控制栏
+            startBtn.disabled = false;
+            startBtn.style.display = "inline-block";
+            scene2Btn.style.display = "none";
+            scene3Btn.style.display = "none";
+            scene4Btn.style.display = "none";
+            scene5Btn.style.display = "none";
+            scene6Btn.style.display = "none";
+            scene7Btn.style.display = "none";
+            resetBtn.style.display = "none";
+            giftButtons.style.display = "none";
+            
+            // 禁用打赏按钮
+            roseBtn.disabled = true;
+            carBtn.disabled = true;
+            planeBtn.disabled = true;
+            rocketBtn.disabled = true;
+            
+            // 更新数据
+            updateStats();
+            updateShameLevel();
+            
+            // 清除弹幕
+            danmakuLayer.innerHTML = '';
+            if (danmakuInterval) clearInterval(danmakuInterval);
+            
+            // 初始弹幕
+            setTimeout(() => {
+                addDanmaku("直播重置，准备重新开始", 1);
+            }, 500);
+            
+            isLiveActive = false;
+        }
+        
+        // ==================== 弹幕系统 ====================
+        function startDanmaku() {
+            // 定时生成情境化弹幕
+            danmakuInterval = setInterval(() => {
+                if (isLiveActive) {
+                    for (let i = 0; i < Math.floor(Math.random() * 2) + 1; i++) {
+                        addDanmaku(null, currentScene);
+                    }
+                }
+            }, 2500);
+        }
+        
+        function addDanmaku(text, sceneNum = currentScene) {
+            danmakuCount++;
+            
+            const danmaku = document.createElement('div');
+            danmaku.className = 'danmaku';
+            
+            // 如果没有提供文本，从对应场景的弹幕库中随机选择
+            if (!text) {
+                const sceneKey = `scene${sceneNum}`;
+                const danmakuPool = DANMAKU_LIB[sceneKey] || DANMAKU_LIB.scene1;
+                text = danmakuPool[Math.floor(Math.random() * danmakuPool.length)];
+            }
+            
+            danmaku.textContent = text;
+            
+            // 随机位置
+            const top = Math.random() * 85;
+            danmaku.style.top = `${top}%`;
+            danmaku.style.left = '100%';
+            
+            // 随机颜色
+            const colors = ['#ff6666', '#66aaff', '#66ff99', '#ffff66', '#ff66cc', '#8b5cf6'];
+            danmaku.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            danmakuLayer.appendChild(danmaku);
+            
+            // 动画
+            const width = window.innerWidth + danmaku.offsetWidth + 100;
+            const duration = 7000 + Math.random() * 6000;
+            
+            danmaku.animate([
+                { transform: 'translateX(0)' },
+                { transform: `translateX(-${width}px)` }
+            ], {
+                duration: duration,
+                easing: 'linear'
+            }).onfinish = () => danmaku.remove();
+        }
+        
+        // ==================== 事件监听 ====================
+        startBtn.addEventListener('click', startLive);
+        scene2Btn.addEventListener('click', () => gotoScene(2));
+        scene3Btn.addEventListener('click', () => gotoScene(3));
+        scene4Btn.addEventListener('click', () => gotoScene(4));
+        scene5Btn.addEventListener('click', () => gotoScene(5));
+        scene6Btn.addEventListener('click', () => gotoScene(6));
+        scene7Btn.addEventListener('click', () => gotoScene(7));
+        resetBtn.addEventListener('click', resetLive);
+        
+        // 打赏按钮
+        roseBtn.addEventListener('click', () => sendGift('rose'));
+        carBtn.addEventListener('click', () => sendGift('car'));
+        planeBtn.addEventListener('click', () => sendGift('plane'));
+        rocketBtn.addEventListener('click', () => sendGift('rocket'));
+        
+        // 初始弹幕
+        setTimeout(() => {
+            addDanmaku("欢迎来到镜镜调教直播", 1);
+            addDanmaku("点击开始直播", 1);
+        }, 500);
+    </script>
+</body>
+</html>
